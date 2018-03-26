@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no"/>
+    <title>Simple Map</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.23/esri/css/esri.css">
+    <style>
+      html, body, #map {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+    <script src="https://js.arcgis.com/3.23/"></script>
+    <script>
+      var map;
+    function Cfirst() {  
+      require(["esri/map","dojo/dom","dojo/on","esri/geometry/Point","dojo/domReady!"],        
+        function(Map,dom,on,Point)
+              {
+          on(dom.byId("Btns"), "click", updates);
+          map = new Map("map");             
+             updates() 
+     function updates() {     
+         var myZoom = document.getElementById("inputTitle").value;
+         var mylon = document.getElementById("lon").value;   
+         var mylat = document.getElementById("lat").value;    
+         var myBasemap = document.getElementById("basemapsec").value;
+         var myPoint = new Point(mylon, mylat);
+         map.setZoom(myZoom);
+         map.centerAt(myPoint);
+         map.setBasemap(myBasemap);
+         }
+      });
+        }
+    </script>
+  </head>
+
+  <body >
+    <div id="map">
+        <select id ="basemapsec" title="地图样式" >
+        <option value="osm">osm</option>
+        <option value="topo">topo</option>
+        <option value="gray">gray</option>
+        <option value="hybrid">hybrid</option>
+        <option value="oceans">oceans</option>
+        <option value="satellite">satellite</option>
+        <option value="national-geographic">national-geographic</option>
+        </select>
+    <input id="inputTitle" type="text" value="" placeholder="缩放级别" />
+    <input id="lon" type="text" value="" placeholder="经度" />
+    <input id="lat" type="text" value="" placeholder="纬度" />
+    <input type="button" id="Btns" value="加载" class="submitButton" /> 
+    <input type="button" id="Btns" value="从无到有" class="submitButton" onclick="Cfirst()" /> 
+	</div>
+  </body>
+</html>
