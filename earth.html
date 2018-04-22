@@ -1,0 +1,118 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no"/>
+    <title>CSVLayer sample</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.23/esri/css/esri.css">
+    <style>
+      html, body{
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+      }
+	  	
+      body {
+        background-color: #FFF;
+        overflow: hidden;
+        font-family: "Trebuchet MS";
+      }
+    </style>
+    <script src="https://js.arcgis.com/3.23/"></script>
+    <script>
+      var map, csv;
+
+      require([
+       "dojo/dom",
+       "dojo/on", 
+        "esri/map", 
+        "esri/layers/CSVLayer",
+        "esri/Color",
+        "esri/symbols/SimpleMarkerSymbol",
+        "esri/renderers/SimpleRenderer",
+		"esri/renderers/ClassBreaksRenderer",
+		"esri/renderers/HeatmapRenderer",
+        "esri/InfoTemplate",
+        "esri/config",
+        "dojo/domReady!"
+      ], function(
+        dom, on,Map, CSVLayer, Color, SimpleMarkerSymbol, SimpleRenderer, ClassBreaksRenderer,HeatmapRenderer,InfoTemplate, esriConfig
+      ) {
+        
+        // Use CORS
+		var symbol;
+         var csv1;
+          var csv2;
+        esriConfig.defaults.io.corsEnabledServers.push("https://erqia.github.io"); // supports CORS
+        var map = new Map("map", {
+          basemap: "gray",
+          center: [ 120, 30  ],
+          zoom: 4 
+        });
+        var csv = new CSVLayer("https://erqia.github.io/qq/all_month2.csv", {
+          copyright: "USGS.gov"
+        });
+		var heatmapRenderer = new HeatmapRenderer({
+		 blurRadius: 6,
+		 field:"mag"
+		});
+	    csv.setRenderer(heatmapRenderer);
+		map.addLayer(csv); 
+        on(dom.byId("buttonss"), "click", xuanran_map);
+          
+           function xuanran_map() {
+             var objs = document.getElementById("basemapsec");
+             var index = objs.selectedIndex;
+             basemap1 = objs.options[index].value;
+             if(basemap1 == "xuanran1")  
+                 {
+               map.removeLayer(csv2)
+               csv1 = new CSVLayer("https://erqia.github.io/qq/all_month2.csv", {
+                 copyright: "USGS.gov"
+                });
+                var heatmapRenderer = new HeatmapRenderer({
+		        blurRadius: 6,
+		   field:"mag"
+		});
+	    csv1.setRenderer(heatmapRenderer);
+                     map.addLayer(csv1); 
+                 }
+               else
+               {
+                   map.removeLayer(csv)
+                    csv2 = new CSVLayer("https://erqia.github.io/qq/all_month2.csv", {
+                 copyright: "USGS.gov"
+                });
+                   var orangeRed = new Color([150, 30, 10, 0.5]); 
+	    symbol = new SimpleMarkerSymbol(new SimpleMarkerSymbol("solid", 8, null, orangeRed));
+		symbol2 = new SimpleMarkerSymbol(new SimpleMarkerSymbol("solid", 16, null, orangeRed));
+		symbol3 = new SimpleMarkerSymbol(new SimpleMarkerSymbol("solid", 24, null, orangeRed));
+		symbol4 = new SimpleMarkerSymbol(new SimpleMarkerSymbol("solid", 32, null, orangeRed));
+		symbol5 = new SimpleMarkerSymbol(new SimpleMarkerSymbol("solid", 40, null, orangeRed));	
+		var renderer = new ClassBreaksRenderer(symbol, "depth");
+        renderer.addBreak(0, 20,  symbol);
+        renderer.addBreak(20, 40, symbol2);
+        renderer.addBreak(40, 60, symbol3);
+        renderer.addBreak(60, 80, symbol4);
+        renderer.addBreak(100, Infinity, symbol5);
+		csv2.setRenderer(renderer);
+                   	map.addLayer(csv2); 
+               }
+             
+         }
+        });
+    </script>
+  </head>
+
+  <body>
+    <div id="map">
+         <select id ="basemapsec" title="1" >
+        <option value="xuanran1">热度图</option>
+        <option value="xuanran2">深度分级图</option>
+    </select>
+        <input type='button' id="buttonss" value='渲染'/>
+        
+  </body>
+</html>
