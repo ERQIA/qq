@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no"/>
+    <title>Map1</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.13/esri/css/esri.css">
+    <style>
+      html, body, #map {
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background-color: #FFF;
+        overflow: hidden;
+        font-family: "Trebuchet MS";
+      }
+    </style>
+    <script src="https://js.arcgis.com/3.13/"></script>
+    <script src="http://code.jquery.com/jquery-1.8.3.js"></script>
+    <script>
+      var map;
+
+      require([
+        "esri/map", 
+        "esri/layers/ArcGISTiledMapServiceLayer",  
+        "esri/layers/GraphicsLayer",  
+        "esri/symbols/SimpleMarkerSymbol",  
+        "esri/symbols/SimpleLineSymbol",  
+        "esri/symbols/SimpleFillSymbol", 
+        "esri/renderers/SimpleRenderer",  
+        "esri/Color",  
+        "esri/geometry/Point",  
+        "esri/graphic",  
+        "dojo/domReady!" 
+      ], function(
+        Map,Tiled,GraphicsLayer,SimpleMarkerSymbol,SimpleLineSymbol,SimpleFillSymbol,SimpleRenderer,Color, Point, Graphic
+      ) {
+        
+        
+        map = new Map("map", {
+          basemap: "gray",
+          center: [ 120, 30 ],
+          zoom: 4 
+        });
+        var rdt;//定义渲染器
+        var rdtlayer =new GraphicsLayer();//定义图层
+        map.addLayer(rdtlayer);//将图层加载在MAP中
+        map.on("load",function(){  
+            
+            $.get("https://qqq807111690.github.io/web4gis15/json3.json",null,function(result){  
+                //地图加载后将要素依次添加进图层中
+                    var features = result.features;  
+                    for(var i=0;i<features.length;i++){  
+                        var feature = features[i];
+                        var graphic  = new Graphic(feature); 
+                        rdtlayer.add(graphic);
+                    }
+                         });
+        rdt = new SimpleRenderer(new SimpleFillSymbol().setOutline(new SimpleLineSymbol().setWidth(0.1).setColor(new Color([150,0,0]))));
+       
+        rdt.setColorInfo({
+             //根据人口数量进行颜色渐变设置
+            field: "POPU",
+            minDataValue: 0,
+            maxDataValue: 12000,
+            colors: [
+              new Color([200, 70, 0]),
+              new Color([50, 20, 0])
+            ]
+          });
+       rdtlayer.renderer = rdt;
+       
+          
+ 
+     map.resize();
+        });
+      });
+    </script>
+  </head>
+
+  <body>
+    <div id="map"></div>
+  </body>
+</html>
